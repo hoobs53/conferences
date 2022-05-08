@@ -30,10 +30,8 @@ public class LectureService {
         return lecture.getParticipants().size() < 5;
     }
 
-    public List<Lecture> getAllLecturesByPath(String theme) {
-        Optional<Lecture> lectureOptional = lectureRepository.findByTheme(theme);
-        return lectureOptional.stream()
-                .collect(Collectors.toList());
+    public Optional<List<Lecture>> getAllLecturesByPath(String theme) {
+        return lectureRepository.findByTheme(theme);
     }
 
     public Optional<Lecture> getLectureByThemeAndId(String path, Long lid) {

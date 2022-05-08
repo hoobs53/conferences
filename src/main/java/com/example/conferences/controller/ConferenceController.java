@@ -45,13 +45,16 @@ public class ConferenceController {
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
-    @GetMapping("{pathname}/lectures")
-    public ResponseEntity<List<Lecture>> getAllLecturesByPath(@RequestParam("pathname") String path) {
-        return new ResponseEntity<>(lectureService.getAllLecturesByPath(path), HttpStatus.OK);
+    @GetMapping("/{pathname}/lectures")
+    public ResponseEntity<List<Lecture>> getAllLecturesByPath(@PathVariable("pathname") String path) {
+        Optional<List<Lecture>> optionalLectures = lectureService.getAllLecturesByPath(path);
+        return optionalLectures.map(
+                lectures -> new ResponseEntity<>(lectures, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("{pathname}/lectures/{lid}/participants")
-    public ResponseEntity<Lecture> registerUserToLecture (@RequestParam("pathname") String path, @RequestParam("lid") Long lid,
+    @PostMapping("/{pathname}/lectures/{lid}/participants")
+    public ResponseEntity<Lecture> registerUserToLecture (@PathVariable("pathname") String path, @PathVariable("lid") Long lid,
                                                  @RequestBody User user) {
         Optional<Lecture> lectureOptional = lectureService.getLectureByThemeAndId(path, lid);
         if(lectureOptional.isPresent()) {

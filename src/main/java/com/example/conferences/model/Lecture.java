@@ -37,6 +37,8 @@ public class Lecture {
         this.time = time;
     }
 
+    public Lecture() {}
+
     public Long getId() {
         return id;
     }
