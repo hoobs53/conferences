@@ -31,15 +31,18 @@ public class ConferencesCommandLineRunner implements CommandLineRunner {
         Path path = new Path(theme);
         List<Lecture> lectureList = path.getLectures();
 
-        Lecture lecture = new Lecture(null, new ArrayList<>(), new Date(1622534400000L), new Time(1622534400000L),theme);
+        long milliseconds = 1622534400000L;
+        Lecture lecture = new Lecture(null, new ArrayList<>(), new Date(milliseconds), new Time(milliseconds),theme);
         lectureRepository.save(lecture);
         path.getLectures().add(lecture);
 
-        lecture = new Lecture(null, new ArrayList<>(), new Date(1622541600000L), new Time(1622541600000L),theme);
+        milliseconds = 1622541600000L;
+        lecture = new Lecture(null, new ArrayList<>(), new Date(milliseconds), new Time(milliseconds),theme);
         lectureRepository.save(lecture);
         path.getLectures().add(lecture);
 
-        lecture = new Lecture(null, new ArrayList<>(), new Date(1622548800000L), new Time(1622548800000L),theme);
+        milliseconds = 1622548800000L;
+        lecture = new Lecture(null, new ArrayList<>(), new Date(milliseconds), new Time(milliseconds),theme);
         lectureRepository.save(lecture);
         path.getLectures().add(lecture);
 
