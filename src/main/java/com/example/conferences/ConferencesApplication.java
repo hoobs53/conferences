@@ -7,8 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class ConferencesApplication {
-	@Autowired
-	Conference conference;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ConferencesApplication.class, args);

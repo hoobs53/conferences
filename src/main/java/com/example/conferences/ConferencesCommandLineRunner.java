@@ -22,9 +22,9 @@ public class ConferencesCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String [] args) {
-        createPath("Theme1");
-        createPath("Theme2");
-        createPath("Theme3");
+        createPath("technology");
+        createPath("research");
+        createPath("marketing");
     }
 
     private void createPath(String theme) {

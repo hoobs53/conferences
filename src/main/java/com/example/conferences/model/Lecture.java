@@ -2,6 +2,7 @@ package com.example.conferences.model;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,8 +14,11 @@ public class Lecture {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "lectures")
-    private List<User> participants;
+
+    @ManyToMany
+    @JoinTable(name = "participants", joinColumns = @JoinColumn(name = "lecture_id", referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    private List<User> participants = new ArrayList<>();
 
     private Date date;
 
@@ -73,5 +77,14 @@ public class Lecture {
 
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+
+    public boolean containsUser(Long uid) {
+        return participants.stream()
+                .anyMatch(user -> user.getId().equals(uid));
+    }
+
+    public void removeUser(Long uid) {
+        participants.removeIf(user -> user.getId().equals(uid));
     }
 }

@@ -36,7 +36,7 @@ public class ConferenceController {
 
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-            return new ResponseEntity<>(userService.createNewUser(user), HttpStatus.OK);
+        return new ResponseEntity<>(userService.createNewUser(user), HttpStatus.OK);
     }
 
     @GetMapping("/users")
@@ -47,29 +47,46 @@ public class ConferenceController {
 
     @GetMapping("/{pathname}/lectures")
     public ResponseEntity<List<Lecture>> getAllLecturesByPath(@PathVariable("pathname") String path) {
-        Optional<List<Lecture>> optionalLectures = lectureService.getAllLecturesByPath(path);
+        Optional<List<Lecture>> optionalLectures = lectureService.getAllLecturesByPath(path.toLowerCase());
         return optionalLectures.map(
-                lectures -> new ResponseEntity<>(lectures, HttpStatus.OK))
+                        lectures -> new ResponseEntity<>(lectures, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/{pathname}/lectures/{lid}/participants")
-    public ResponseEntity<Lecture> registerUserToLecture (@PathVariable("pathname") String path, @PathVariable("lid") Long lid,
-                                                 @RequestBody User user) {
-        Optional<Lecture> lectureOptional = lectureService.getLectureByThemeAndId(path, lid);
-        if(lectureOptional.isPresent()) {
+    @PostMapping("/lectures/{lid}/participants")
+    public ResponseEntity<Lecture> registerUserToLecture(@PathVariable("lid") Long lid,
+                                                         @RequestBody User user) {
+        Optional<Lecture> lectureOptional = lectureService.getLectureById(lid);
+        if (lectureOptional.isPresent()) {
             Lecture lecture = lectureOptional.get();
-            if(lecture.getParticipants().size() < 5) {
-                if (!userService.ifUserExists(user))
-                    userService.createNewUser(user);
+            if (lectureService.ifNotFull(lecture)) {
+                System.out.println(lecture.getParticipants().size());
+                if (!userService.ifUserExists(user)) {
+                    User _user = userService.createNewUser(user);
+                    System.out.println("new user");
+                    lectureService.registerUser(user, lecture);
+                    System.out.println("added user");
 
-                lecture.addParticipant(user);
-                return new ResponseEntity<>(lecture, HttpStatus.OK);
+                    return new ResponseEntity<>(lecture, HttpStatus.OK);
+                }
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
             }
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @DeleteMapping("/lectures/{lid}/participants/{uid}")
+    public ResponseEntity<Lecture> unregisterUser(@PathVariable("lid") Long lid,
+                                                  @PathVariable("uid") Long uid) {
+            return lectureService.removeUserFromLecture(lid, uid);
+    }
+
+    @PatchMapping("/users/{uid}")
+    public ResponseEntity<User> updateUserEmail(@PathVariable("uid") Long uid,
+                                                @RequestBody Map<String, String> email) {
+        return userService.updateUserEmail(uid, email.get("email"));
     }
 }

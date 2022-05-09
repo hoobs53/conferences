@@ -36,4 +36,17 @@ public class UserService {
         return userRepository.findIfExists(user.getLogin(), user.getEmail())
                 .isPresent();
     }
+
+    public Optional<User> getUserById(Long lid) {
+        return userRepository.findById(lid);
+    }
+
+    public ResponseEntity<User> updateUserEmail(Long uid, String email) {
+        Optional<User> userOptional = userRepository.findById(uid);
+        if(userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setEmail(email);
+            return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
+        } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }
