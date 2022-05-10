@@ -53,6 +53,13 @@ public class ConferenceController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/users/lectures")
+    public ResponseEntity<List<Lecture>> getUsersLectures(@RequestParam("email") String email) {
+        return userService.getUserByEmail(email).map(
+                user -> lectureService.getUsersLectures(user))
+                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.OK)
+        );
+    }
     @PostMapping("/lectures/{lid}/participants")
     public ResponseEntity<Lecture> registerUserToLecture(@PathVariable("lid") Long lid,
                                                          @RequestBody User user) {

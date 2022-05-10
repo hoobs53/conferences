@@ -49,4 +49,8 @@ public class UserService {
             return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }

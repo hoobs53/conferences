@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LectureService {
@@ -21,8 +22,8 @@ public class LectureService {
         response.addParticipant(user);
         lectureRepository.save(response);
     }
-    public ResponseEntity<List<Lecture>> getAllLectures() {
-        return new ResponseEntity<>(lectureRepository.findAll(), HttpStatus.OK);
+    public List<Lecture> getAllLectures() {
+        return lectureRepository.findAll();
     }
 
     public boolean ifNotFull(Lecture lecture) {
@@ -47,5 +48,13 @@ public class LectureService {
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<List<Lecture>> getUsersLectures(User user) {
+        List<Lecture> lectureList = lectureRepository.findAll();
+        List<Lecture> response = lectureList.stream()
+                .filter(lecture -> lecture.getParticipants().contains(user))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
