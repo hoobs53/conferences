@@ -1,6 +1,7 @@
 package com.example.conferences.controller;
 
 import com.example.conferences.exceptions.LectureFullException;
+import com.example.conferences.exceptions.UserNotFreeException;
 import com.example.conferences.model.Conference;
 import com.example.conferences.model.Lecture;
 import com.example.conferences.model.Path;
@@ -71,7 +72,12 @@ public class ConferenceController {
                 Optional<User> userOptional = userService.getUserByLoginAndEmail(user.getLogin(), user.getEmail());
                 user = userOptional.isPresent()
                         ? userOptional.get() : userService.createNewUser(user);
-                if(!lecture.containsUser(user.getId())) {
+
+                if (!lecture.containsUser(user.getId())) {
+
+                    if (lectureService.ifUserRegisteredOnDate(lecture.getDate(), user))
+                        throw new UserNotFreeException(); //user already has a lecture registered on given date
+
                     lectureService.registerUser(user, lecture);
                     sendEmailConfirmation(user, lecture);
                 }

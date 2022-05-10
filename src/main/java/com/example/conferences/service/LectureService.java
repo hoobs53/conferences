@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,5 +57,11 @@ public class LectureService {
                 .filter(lecture -> lecture.getParticipants().contains(user))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    public boolean ifUserRegisteredOnDate(Date date, User user) {
+        List<Lecture> lectureList = lectureRepository.findAll();
+        return lectureList.stream()
+                .anyMatch(lecture ->
+                        lecture.getDate().equals(date) && lecture.containsUser(user.getId()));
     }
 }
