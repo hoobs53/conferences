@@ -21,7 +21,7 @@ public class UserService {
     private UserRepository userRepository;
 
     public User createNewUser(User user) {
-        Optional<User> userOptional = userRepository.findIfTaken(user.getLogin(), user.getEmail());
+        Optional<User> userOptional = userRepository.findIfLoginTaken(user.getLogin(), user.getEmail());
         if(userOptional.isPresent()) {
             throw new LoginTakenException();
         }
@@ -41,6 +41,9 @@ public class UserService {
         return userRepository.findById(lid);
     }
 
+    public Optional<User> getUserByLoginAndEmail(String login, String email) {
+        return userRepository.findIfExists(login, email);
+    }
     public ResponseEntity<User> updateUserEmail(Long uid, String email) {
         Optional<User> userOptional = userRepository.findById(uid);
         if(userOptional.isPresent()) {

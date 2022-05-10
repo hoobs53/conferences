@@ -68,18 +68,17 @@ public class ConferenceController {
         if (lectureOptional.isPresent()) {
             Lecture lecture = lectureOptional.get();
             if (lectureService.ifNotFull(lecture)) {
-                if (!userService.ifUserExists(user)) {
-                    User _user = userService.createNewUser(user);
-                }
-                user = userService.getUserByEmail(user.getEmail()).get();
+                Optional<User> userOptional = userService.getUserByLoginAndEmail(user.getLogin(), user.getEmail());
+                user = userOptional.isPresent()
+                        ? userOptional.get() : userService.createNewUser(user);
                 if(!lecture.containsUser(user.getId())) {
                     lectureService.registerUser(user, lecture);
                 }
                 return new ResponseEntity<>(lecture, HttpStatus.OK);
-            } else {
+            } else { //lecture is full
                 throw new LectureFullException();
             }
-        } else {
+        } else { //lecture is not present
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
