@@ -12,10 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 @RestController
 public class ConferenceController {
@@ -73,6 +73,7 @@ public class ConferenceController {
                         ? userOptional.get() : userService.createNewUser(user);
                 if(!lecture.containsUser(user.getId())) {
                     lectureService.registerUser(user, lecture);
+                    sendEmailConfirmation(user, lecture);
                 }
                 return new ResponseEntity<>(lecture, HttpStatus.OK);
             } else { //lecture is full
@@ -80,6 +81,23 @@ public class ConferenceController {
             }
         } else { //lecture is not present
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private void sendEmailConfirmation(User user, Lecture lecture) {
+        try {
+            FileWriter notificationFileWriter = new FileWriter("powiadomienia.txt", true);
+            String date = "Data: " + new Date(System.currentTimeMillis()) + "\n";
+            String to = "Do: " + user.getEmail() + "\n";
+            String message = "Treść: Zostałeś zapisany na prelekcję o tematyce: " + lecture.getTheme()
+                    + ". Spotkanie odbędzie się: " + lecture.getDate() + "\n\n";
+
+            notificationFileWriter.append(date);
+            notificationFileWriter.append(to);
+            notificationFileWriter.append(message);
+            notificationFileWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred with opening notification file");
         }
     }
 
