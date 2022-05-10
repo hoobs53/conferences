@@ -2,9 +2,7 @@ package com.example.conferences.controller;
 
 import com.example.conferences.exceptions.LectureFullException;
 import com.example.conferences.exceptions.UserNotFreeException;
-import com.example.conferences.model.Conference;
 import com.example.conferences.model.Lecture;
-import com.example.conferences.model.Path;
 import com.example.conferences.model.User;
 import com.example.conferences.service.LectureService;
 import com.example.conferences.service.UserService;
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -22,18 +19,23 @@ import java.util.*;
 public class ConferenceController {
 
     @Autowired
-    Conference conference;
-    @Autowired
     UserService userService;
     @Autowired
     LectureService lectureService;
 
-    @GetMapping("/")
-    public ResponseEntity<Object> getConferencePlan() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("paths", conference.getPaths());
-        map.put("total_participants", conference.getParticipants());
-        return new ResponseEntity<>(map, HttpStatus.OK);
+    @GetMapping("/stats")
+    public ResponseEntity<Object> getMostPopular(@RequestParam("type") String type) {
+        switch(type) {
+            case("id"): {
+                List<Map<String, Object>> statistics = lectureService.getMostPopularLecturesById(userService.userCount());
+                return new ResponseEntity<>(statistics, HttpStatus.OK);
+            }
+            case("theme"): {
+                List<Map<String, Object>> statistics = lectureService.getMostPopularLecturesByTheme(userService.userCount());
+                return new ResponseEntity<>(statistics, HttpStatus.OK);
+            }
+            default: return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/users")

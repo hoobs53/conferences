@@ -8,9 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,5 +62,32 @@ public class LectureService {
         return lectureList.stream()
                 .anyMatch(lecture ->
                         lecture.getDate().equals(date) && lecture.containsUser(user.getId()));
+    }
+
+    public List<Map<String, Object>> getMostPopularLecturesById(int total_users) {
+        List<List<Object>> objects = lectureRepository.findMostPopularLecturesById();
+        List<Map<String, Object>> results = new ArrayList<>();
+        for (List<Object> list: objects) {
+            Map<String, Object> row = new HashMap<>();
+            row.put("lecture_id", list.get(0));
+            float arg1AsFloat = (float) (((BigInteger)list.get(1)).intValue());
+            row.put("users_percentage", arg1AsFloat/total_users);
+            row.put("users_total", list.get(1));
+            results.add(row);
+        }
+        return results;
+    }
+    public List<Map<String, Object>> getMostPopularLecturesByTheme(int total_users) {
+        List<List<Object>> objects = lectureRepository.findMostPopularLecturesByTheme();
+        List<Map<String, Object>> results = new ArrayList<>();
+        for (List<Object> list: objects) {
+            Map<String, Object> row = new HashMap<>();
+            row.put("theme", list.get(0));
+            float arg1AsFloat = (float) (((BigInteger)list.get(1)).intValue());
+            row.put("users_percentage", arg1AsFloat/total_users);
+            row.put("users_total", list.get(1));
+            results.add(row);
+        }
+        return results;
     }
 }
