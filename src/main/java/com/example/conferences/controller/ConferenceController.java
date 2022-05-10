@@ -1,5 +1,6 @@
 package com.example.conferences.controller;
 
+import com.example.conferences.exceptions.LectureFullException;
 import com.example.conferences.model.Conference;
 import com.example.conferences.model.Lecture;
 import com.example.conferences.model.Path;
@@ -67,18 +68,16 @@ public class ConferenceController {
         if (lectureOptional.isPresent()) {
             Lecture lecture = lectureOptional.get();
             if (lectureService.ifNotFull(lecture)) {
-                System.out.println(lecture.getParticipants().size());
                 if (!userService.ifUserExists(user)) {
                     User _user = userService.createNewUser(user);
-                    System.out.println("new user");
-                    lectureService.registerUser(user, lecture);
-                    System.out.println("added user");
-
-                    return new ResponseEntity<>(lecture, HttpStatus.OK);
                 }
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                user = userService.getUserByEmail(user.getEmail()).get();
+                if(!lecture.containsUser(user.getId())) {
+                    lectureService.registerUser(user, lecture);
+                }
+                return new ResponseEntity<>(lecture, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+                throw new LectureFullException();
             }
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
