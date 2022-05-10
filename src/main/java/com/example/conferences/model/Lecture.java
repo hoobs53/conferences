@@ -1,5 +1,7 @@
 package com.example.conferences.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ public class Lecture {
     private Long id;
 
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "participants", joinColumns = @JoinColumn(name = "lecture_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
@@ -29,6 +32,12 @@ public class Lecture {
     public void setTime(Time time) {
         this.time = time;
     }
+
+    public int getParticipants_number() {
+        return participants.size();
+    }
+
+    private int participants_number;
 
     private Time time;
     private String theme;

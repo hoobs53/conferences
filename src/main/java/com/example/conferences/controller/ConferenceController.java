@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class ConferenceController {
@@ -38,6 +39,30 @@ public class ConferenceController {
         }
     }
 
+    @GetMapping("/")
+    public ResponseEntity<Object> getConferencePlan() {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> themes = new HashMap<>();
+        List<Lecture> lectureList = lectureService.getAllLectures();
+
+        List<Lecture> themeLectureList = lectureList.stream().filter(
+                lecture -> lecture.getTheme().equals("technology")
+        ).collect(Collectors.toList());
+        themes.put("technology", themeLectureList);
+
+        themeLectureList = lectureList.stream().filter(
+                lecture -> lecture.getTheme().equals("marketing")
+        ).collect(Collectors.toList());
+        themes.put("marketing", themeLectureList);
+
+        themeLectureList = lectureList.stream().filter(
+                lecture -> lecture.getTheme().equals("research")
+        ).collect(Collectors.toList());
+        themes.put("research", themeLectureList);
+
+        response.put("paths", themes);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         return new ResponseEntity<>(userService.createNewUser(user), HttpStatus.OK);
