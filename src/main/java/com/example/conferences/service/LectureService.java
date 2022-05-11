@@ -17,8 +17,8 @@ public class LectureService {
     @Autowired
     LectureRepository lectureRepository;
 
-    public void registerUser(User user, Lecture lecture) {
-        Lecture response = lectureRepository.getById(lecture.getId());
+    public void registerUser(User user, Long lectureId) {
+        Lecture response = lectureRepository.getById(lectureId);
         response.addParticipant(user);
         lectureRepository.save(response);
     }
@@ -57,11 +57,11 @@ public class LectureService {
                 .collect(Collectors.toList());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public boolean ifUserRegisteredOnDate(Date date, User user) {
+    public boolean ifUserRegisteredOnDate(Date date, Long userId) {
         List<Lecture> lectureList = lectureRepository.findAll();
         return lectureList.stream()
                 .anyMatch(lecture ->
-                        lecture.getDate().equals(date) && lecture.containsUser(user.getId()));
+                        lecture.getDate().equals(date) && lecture.containsUser(userId));
     }
 
     public List<Map<String, Object>> getMostPopularLecturesById(int total_users) {

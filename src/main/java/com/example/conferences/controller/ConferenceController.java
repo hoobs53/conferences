@@ -63,10 +63,6 @@ public class ConferenceController {
         response.put("paths", themes);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PostMapping("/users")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return new ResponseEntity<>(userService.createNewUser(user), HttpStatus.OK);
-    }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -101,20 +97,17 @@ public class ConferenceController {
                         ? userOptional.get() : userService.createNewUser(user);
 
                 if (!lecture.containsUser(user.getId())) {
-
-                    if (lectureService.ifUserRegisteredOnDate(lecture.getDate(), user))
+                    if (lectureService.ifUserRegisteredOnDate(lecture.getDate(), user.getId()))
                         throw new UserNotFreeException(); //user already has a lecture registered on given date
 
-                    lectureService.registerUser(user, lecture);
+                    lectureService.registerUser(user, lecture.getId());
                     sendEmailConfirmation(user, lecture);
                 }
                 return new ResponseEntity<>(lecture, HttpStatus.OK);
-            } else { //lecture is full
+            } else  //lecture is full
                 throw new LectureFullException();
-            }
-        } else { //lecture is not present
+        } else //lecture with a given id doesn't exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
     }
 
     private void sendEmailConfirmation(User user, Lecture lecture) {
