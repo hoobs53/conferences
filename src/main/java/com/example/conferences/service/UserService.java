@@ -1,5 +1,6 @@
 package com.example.conferences.service;
 
+import com.example.conferences.exceptions.EmailTakenException;
 import com.example.conferences.exceptions.LoginTakenException;
 import com.example.conferences.model.Lecture;
 import com.example.conferences.model.User;
@@ -22,9 +23,13 @@ public class UserService {
 
     public User createNewUser(User user) {
         Optional<User> userOptional = userRepository.findIfLoginTaken(user.getLogin(), user.getEmail());
-        if(userOptional.isPresent()) {
+        if(userOptional.isPresent())
             throw new LoginTakenException();
-        }
+
+        userOptional = userRepository.findIfEmailTaken(user.getLogin(), user.getEmail());
+        if(userOptional.isPresent())
+            throw new EmailTakenException();
+
         return userRepository.save(user);
     }
 
@@ -48,7 +53,13 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(uid);
         if(userOptional.isPresent()) {
             User user = userOptional.get();
+
+            userOptional = userRepository.findIfEmailTaken(user.getLogin(), email);
+            if(userOptional.isPresent())
+                throw new EmailTakenException();
+
             user.setEmail(email);
+
             return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
