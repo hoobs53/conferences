@@ -17,7 +17,7 @@ public class Lecture {
     private Long id;
 
 
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToMany
     @JoinTable(name = "participants", joinColumns = @JoinColumn(name = "lecture_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))

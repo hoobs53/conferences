@@ -44,6 +44,7 @@ public class LectureService {
             Lecture lecture = lectureOptional.get();
             if(lecture.containsUser(uid)) {
                 lecture.removeUser(uid);
+                lectureRepository.save(lecture);
                 return new ResponseEntity<>(lecture, HttpStatus.OK);
             }
         }
