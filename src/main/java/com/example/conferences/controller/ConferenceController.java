@@ -9,8 +9,14 @@ import com.example.conferences.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -86,8 +92,16 @@ public class ConferenceController {
         );
     }
     @PostMapping("/lectures/{lid}/participants")
-    public ResponseEntity<Lecture> registerUserToLecture(@PathVariable("lid") Long lid,
-                                                         @RequestBody User user) {
+    public ResponseEntity<Object> registerUserToLecture(@PathVariable("lid") Long lid,
+                                                         @RequestBody @Valid User user, Errors errors) {
+
+        if (errors.hasFieldErrors()) { //when User fields are invalid
+            FieldError fieldError = errors.getFieldError();
+            assert fieldError != null;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(fieldError.getDefaultMessage());
+        }
+
         Optional<Lecture> lectureOptional = lectureService.getLectureById(lid);
         if (lectureOptional.isPresent()) {
             Lecture lecture = lectureOptional.get();
@@ -135,7 +149,7 @@ public class ConferenceController {
 
     @PatchMapping("/users/{uid}")
     public ResponseEntity<User> updateUserEmail(@PathVariable("uid") Long uid,
-                                                @RequestBody Map<String, String> email) {
+                                                @RequestBody Map<String, @Email String> email) {
         return userService.updateUserEmail(uid, email.get("email"));
     }
 }

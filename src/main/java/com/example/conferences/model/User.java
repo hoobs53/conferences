@@ -1,6 +1,9 @@
 package com.example.conferences.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -9,7 +12,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Login nie może być pusty")
     private String login;
+    @Email(message = "Email musi być poprawny")
+    @NotBlank(message = "Email nie może być pusty")
     private String email;
 
 
