@@ -2,13 +2,11 @@ package com.example.conferences.service;
 
 import com.example.conferences.exceptions.EmailTakenException;
 import com.example.conferences.exceptions.LoginTakenException;
-import com.example.conferences.model.Lecture;
 import com.example.conferences.model.User;
 import com.example.conferences.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,7 +66,4 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public int userCount() {
-        return userRepository.findAll().size();
-    }
 }
