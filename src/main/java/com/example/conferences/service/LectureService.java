@@ -65,30 +65,39 @@ public class LectureService {
                         lecture.getDate().equals(date) && lecture.containsUser(userId));
     }
 
-    public List<Map<String, Object>> getMostPopularLecturesById(int total_users) {
+    public List<Map<String, Object>> getMostPopularLecturesById() {
         List<List<Object>> objects = lectureRepository.findMostPopularLecturesById();
         List<Map<String, Object>> results = new ArrayList<>();
         for (List<Object> list: objects) {
             Map<String, Object> row = new HashMap<>();
             row.put("lecture_id", list.get(0));
             float arg1AsFloat = (float) (((BigInteger)list.get(1)).intValue());
-            row.put("users_percentage", arg1AsFloat/total_users);
+            row.put("users_percentage", arg1AsFloat/getNumberOfParticipants()*100);
             row.put("users_total", list.get(1));
             results.add(row);
         }
         return results;
     }
-    public List<Map<String, Object>> getMostPopularLecturesByTheme(int total_users) {
+    public List<Map<String, Object>> getMostPopularLecturesByTheme() {
         List<List<Object>> objects = lectureRepository.findMostPopularLecturesByTheme();
         List<Map<String, Object>> results = new ArrayList<>();
         for (List<Object> list: objects) {
             Map<String, Object> row = new HashMap<>();
             row.put("theme", list.get(0));
             float arg1AsFloat = (float) (((BigInteger)list.get(1)).intValue());
-            row.put("users_percentage", arg1AsFloat/total_users);
+            row.put("users_percentage", arg1AsFloat/getNumberOfParticipants()*100);
             row.put("users_total", list.get(1));
             results.add(row);
         }
         return results;
+    }
+
+    private int getNumberOfParticipants() {
+        int numberOfParticipants = 0;
+        List<Lecture> lectureList = lectureRepository.findAll();
+        for (Lecture l: lectureList) {
+            numberOfParticipants += l.getParticipants_number();
+        }
+        return numberOfParticipants;
     }
 }

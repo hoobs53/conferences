@@ -28,11 +28,11 @@ public class ConferenceController {
     public ResponseEntity<Object> getMostPopular(@RequestParam("type") String type) {
         switch(type) {
             case("id"): {
-                List<Map<String, Object>> statistics = lectureService.getMostPopularLecturesById(userService.userCount());
+                List<Map<String, Object>> statistics = lectureService.getMostPopularLecturesById();
                 return new ResponseEntity<>(statistics, HttpStatus.OK);
             }
             case("theme"): {
-                List<Map<String, Object>> statistics = lectureService.getMostPopularLecturesByTheme(userService.userCount());
+                List<Map<String, Object>> statistics = lectureService.getMostPopularLecturesByTheme();
                 return new ResponseEntity<>(statistics, HttpStatus.OK);
             }
             default: return new ResponseEntity<>(HttpStatus.NOT_FOUND);
