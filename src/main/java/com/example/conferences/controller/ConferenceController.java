@@ -85,8 +85,8 @@ public class ConferenceController {
     }
 
     @GetMapping("/users/lectures")
-    public ResponseEntity<List<Lecture>> getUsersLectures(@RequestParam("email") String email) {
-        return userService.getUserByEmail(email).map(
+    public ResponseEntity<List<Lecture>> getUsersLectures(@RequestParam("login") String login) {
+        return userService.getUserByLogin(login).map(
                 user -> lectureService.getUsersLectures(user))
                 .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.OK)
         );

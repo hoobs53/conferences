@@ -66,4 +66,7 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> getUserByLogin(String login) {
+        return userRepository.findByLogin(login);
+    }
 }
