@@ -25,29 +25,19 @@ public class Lecture {
 
     private Date date;
 
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
-    }
-
     public int getParticipants_number() {
         return participants.size();
     }
 
     private int participants_number;
 
-    private Time time;
     private String theme;
 
-    public Lecture(Long id, List<User> participants, Date date, Time time, String theme) {
+    public Lecture(Long id, List<User> participants, Date date, String theme) {
         this.id = id;
         this.participants = participants;
         this.date = date;
         this.theme = theme;
-        this.time = time;
     }
 
     public Lecture() {}
